@@ -13,8 +13,8 @@ namespace Snake
     public partial class Field : Form
     {
         private int _width = 520;
-        private int _height = 450;
-        Point _headLocation = new Point(110, 10);
+        private int _height = 420;
+        Point _headLocation = new Point(120, 20);
         private int dirX, dirY;
         private int score = 0;
         private PictureBox fruit;
@@ -32,10 +32,7 @@ namespace Snake
             lbScore.Text = "Score: " + score;
             _generateMap();
             _generateSnake();
-            fruit = new PictureBox();
-            //Color[] colors = { Color.Red, Color.Yellow, Color.Orange, Color.Purple, Color.Blue };
-            //int indexOfColor = r.Next(colors.Length);
-            fruit.BackColor = Color.Yellow/*colors[indexOfColor]*/;
+            fruit = new PictureBox();            
             fruit.Size = new Size(_sizeOfSide, _sizeOfSide);
             _updateFruit();
             timer.Tick += new EventHandler(_update);
@@ -54,30 +51,21 @@ namespace Snake
             this.Controls.Add(snake[0]);
         }
 
-        //private void _generateFruit()
-        //{
-        //    Random r = new Random();
-        //    fruit = new PictureBox();
-        //    Color[] colors = { Color.Red, Color.Yellow, Color.Orange, Color.Purple, Color.Blue };
-        //    int indexOfColor = r.Next(colors.Length);
-        //    fruit.BackColor = colors[indexOfColor];
-        //    fruit.Size = new Size(_sizeOfSide, _sizeOfSide);
-        //    _updateFruit();
-        //}
-
         private void _updateFruit()
         {
-            
             Random r = new Random();
-            rI = r.Next(110, _width - _sizeOfSide-10);
+            Color[] colors = { Color.Red, Color.Yellow, Color.Orange, Color.Purple, Color.Blue };
+            int indexOfColor = r.Next(colors.Length);
+            fruit.BackColor = colors[indexOfColor];
+            rI = r.Next(120, _width - _sizeOfSide - 20);
             int tempI = rI % _sizeOfSide;
             rI -= tempI;
-            rJ = r.Next(10, _height - _sizeOfSide - 10);
+            rJ = r.Next(20, _height - _sizeOfSide - 20);
             int tempJ = rJ % _sizeOfSide;
             rJ -= tempJ;
             //rI++;
             //rJ++;
-            fruit.Location = new Point(rI + 10, rJ+ 10);
+            fruit.Location = new Point(rI, rJ);
             this.Controls.Add(fruit);
         }
 
@@ -86,25 +74,25 @@ namespace Snake
             PictureBox picTop = new PictureBox();
             picTop.BackColor = Color.Black;
             picTop.Location = new Point(_width - 420, 0);
-            picTop.Size = new Size(_width - 100, 10);
+            picTop.Size = new Size(_width - 100, 20);
             this.Controls.Add(picTop);
 
             PictureBox picButtom = new PictureBox();
             picButtom.BackColor = Color.Black;
-            picButtom.Location = new Point(_width - 420, _height - 10);
-            picButtom.Size = new Size(_width - 100, 10);
+            picButtom.Location = new Point(_width - 420, _height - 20);
+            picButtom.Size = new Size(_width - 100, 20);
             this.Controls.Add(picButtom);
 
             PictureBox picLeft = new PictureBox();
             picLeft.BackColor = Color.Black;
             picLeft.Location = new Point(_width - 420, 0);
-            picLeft.Size = new Size(10, _height);
+            picLeft.Size = new Size(20, _height);
             this.Controls.Add(picLeft);
 
             PictureBox picRight = new PictureBox();
             picRight.BackColor = Color.Black;
-            picRight.Location = new Point(_width - 10, 0);
-            picRight.Size = new Size(10, _height);
+            picRight.Location = new Point(_width - 20, 0);
+            picRight.Size = new Size(20, _height);
             this.Controls.Add(picRight);
         }
 
@@ -125,7 +113,21 @@ namespace Snake
             snake[0].Location = new Point
                 (snake[0].Location.X + dirX * (_sizeOfSide), 
                 snake[0].Location.Y + dirY * (_sizeOfSide));
-            //_eatItself();
+            _eatItself();
+        }
+
+        private void _eatItself()
+        {
+            for (int _i = 1; _i < score; _i++)
+            {
+                if (snake[0].Location == snake[_i].Location)
+                {
+                    for (int _j = _i; _j <= score; _j++)
+                        this.Controls.Remove(snake[_j]);
+                    score = score - (score - _i + 1);
+                    lbScore.Text = "Score: " + score;
+                }
+            }
         }
 
         private void _eatFruit()
@@ -135,8 +137,8 @@ namespace Snake
                 lbScore.Text = "Score: " + ++score;
                 snake[score] = new PictureBox();
                 snake[score].Location = new Point(snake[score - 1].Location.X + 20 * dirX, snake[score - 1].Location.Y - 20 * dirY);
-                snake[score].Size = new Size(_sizeOfSide - 1, _sizeOfSide - 1);
-                snake[score].BackColor = Color.Red;
+                snake[score].Size = new Size(_sizeOfSide, _sizeOfSide);
+                snake[score].BackColor = Color.DarkGreen;
                 this.Controls.Add(snake[score]);
                 
                 _updateFruit();
@@ -145,7 +147,7 @@ namespace Snake
 
         private void _checkBorders()
         {
-            if (snake[0].Location.X <= 105)
+            if (snake[0].Location.X < 110)
             {
                 for (int _i = 1; _i <= score; _i++)
                 {
@@ -155,7 +157,7 @@ namespace Snake
                 lbScore.Text = "Score: " + score;
                 dirX = 1;
             }
-            if (snake[0].Location.X > _width - 40)
+            if (snake[0].Location.X > _width - 39)
             {
                 for (int _i = 1; _i <= score; _i++)
                 {
@@ -165,7 +167,7 @@ namespace Snake
                 lbScore.Text = "Score: " + score;
                 dirX = -1;
             }
-            if (snake[0].Location.Y < 20)
+            if (snake[0].Location.Y < 10)
             {
                 for (int _i = 1; _i <= score; _i++)
                 {
