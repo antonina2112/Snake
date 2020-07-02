@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Snake.Properties;
 
 namespace Snake
 {
@@ -21,6 +22,7 @@ namespace Snake
         private PictureBox[] snake = new PictureBox[400];
         private int _sizeOfSide = 20;
         private int rI, rJ;
+        
 
         public Field()
         {
@@ -36,7 +38,7 @@ namespace Snake
             fruit.Size = new Size(_sizeOfSide, _sizeOfSide);
             _updateFruit();
             timer.Tick += new EventHandler(_update);
-            timer.Interval = 200;
+            _updateSpeed();
             timer.Start();
             this.KeyDown += new KeyEventHandler(OKP);
 
@@ -45,6 +47,7 @@ namespace Snake
         private void _generateSnake()
         {
             snake[0] = new PictureBox();
+            snake[0].Image = Resources.headOfSnake;/*Image.FromFile("headOfSnake.png");*/
             snake[0].Location = _headLocation;
             snake[0].Size = new Size(_sizeOfSide, _sizeOfSide);
             snake[0].BackColor = Color.DarkGreen;
@@ -101,6 +104,7 @@ namespace Snake
             _checkBorders();
             _eatFruit();
             _moveSnake();
+            
             //cube.Location = new Point(cube.Location.X + dirX * _sizeOfSides, cube.Location.Y + dirY * _sizeOfSides);
         }
 
@@ -124,7 +128,12 @@ namespace Snake
                 {
                     for (int _j = _i; _j <= score; _j++)
                         this.Controls.Remove(snake[_j]);
+                    timer.Stop();
+                    MessageBox.Show("You have eaten yourself! Your score: " + score);
                     score = score - (score - _i + 1);
+                    MessageBox.Show("You can continue with score: " + score + "\n Ready? Go!!");
+                    timer.Start();
+                    _updateSpeed();
                     lbScore.Text = "Score: " + score;
                 }
             }
@@ -135,6 +144,7 @@ namespace Snake
             if (snake[0].Location.X == rI && snake[0].Location.Y == rJ)
             {
                 lbScore.Text = "Score: " + ++score;
+                _updateSpeed();
                 snake[score] = new PictureBox();
                 snake[score].Location = new Point(snake[score - 1].Location.X + 20 * dirX, snake[score - 1].Location.Y - 20 * dirY);
                 snake[score].Size = new Size(_sizeOfSide, _sizeOfSide);
@@ -153,7 +163,11 @@ namespace Snake
                 {
                     this.Controls.Remove(snake[_i]);
                 }
+                timer.Stop();
+                MessageBox.Show("Your score: " + score);
+                timer.Start();
                 score = 0;
+                _updateSpeed();
                 lbScore.Text = "Score: " + score;
                 dirX = 1;
             }
@@ -163,7 +177,11 @@ namespace Snake
                 {
                     this.Controls.Remove(snake[_i]);
                 }
+                timer.Stop();
+                MessageBox.Show("Your score: " + score);
+                timer.Start();
                 score = 0;
+                _updateSpeed();
                 lbScore.Text = "Score: " + score;
                 dirX = -1;
             }
@@ -173,7 +191,11 @@ namespace Snake
                 {
                     this.Controls.Remove(snake[_i]);
                 }
+                timer.Stop();
+                MessageBox.Show("Your score: " + score);
+                timer.Start();
                 score = 0;
+                _updateSpeed();
                 lbScore.Text = "Score: " + score;
                 dirY = 1;
             }
@@ -183,10 +205,40 @@ namespace Snake
                 {
                     this.Controls.Remove(snake[_i]);
                 }
+                timer.Stop();
+                MessageBox.Show("Your score: " + score);
+                timer.Start();
                 score = 0;
+                _updateSpeed();
                 lbScore.Text = "Score: " + score;
                 dirY = -1;
             }
+        }
+
+        private void _updateSpeed()
+        {
+            int speed = 300;
+            if ((0 <= score) && (score < 5))
+            {
+                speed = speed - 50;
+            }
+            else
+            {
+                if ((5 <= score) && (score < 10))
+                    speed = speed - 100;
+                else
+                {
+                    if ((10 <= score) && (score < 15))
+                        speed = speed - 150;
+                    else
+                    {
+                        if ((15 <= score) && (score < 20))
+                            speed = speed - 200;
+                        else speed = speed - 220;
+                    }
+                }
+            }
+            timer.Interval = speed;
         }
 
         private void OKP(object sender, KeyEventArgs e)
@@ -209,7 +261,13 @@ namespace Snake
                     dirY = 1;
                     dirX = 0;
                     break;
+                default:
+                    timer.Stop();
+                    MessageBox.Show("Pause! Your score for now: " + score+ "\n To continue press Ok!");
+                    timer.Start();
+                    break;
             }
+            
         }
     }
 }
