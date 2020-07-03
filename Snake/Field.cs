@@ -11,6 +11,7 @@ using Snake.Properties;
 
 namespace Snake
 {
+
     public partial class Field : Form
     {
         private int _width = 520;
@@ -18,13 +19,12 @@ namespace Snake
         Point _headLocation = new Point(120, 20);
         private int dirX, dirY;
         private int score = 0;
-        private PictureBox fruit;
         private PictureBox[] snake = new PictureBox[400];
+        private PictureBox fruit;
         private int _sizeOfSide = 20;
         private int rI, rJ;
         
-
-        public Field()
+       public Field()
         {
             InitializeComponent();
             this.Width = _width;
@@ -41,7 +41,6 @@ namespace Snake
             _updateSpeed();
             timer.Start();
             this.KeyDown += new KeyEventHandler(OKP);
-
         }
 
         private void _generateSnake()
@@ -60,12 +59,30 @@ namespace Snake
             Color[] colors = { Color.Red, Color.Yellow, Color.Orange, Color.Purple, Color.Blue };
             int indexOfColor = r.Next(colors.Length);
             fruit.BackColor = colors[indexOfColor];
+
             rI = r.Next(120, _width - _sizeOfSide - 20);
             int tempI = rI % _sizeOfSide;
             rI -= tempI;
             rJ = r.Next(20, _height - _sizeOfSide - 20);
             int tempJ = rJ % _sizeOfSide;
             rJ -= tempJ;
+            
+            for (int i = 0; i < snake.Count(); i++)
+            {
+                if (snake[i] != null)
+                {
+                    if (snake[i].Location == new Point(rI, rJ))
+                    {
+                        rI = r.Next(120, _width - _sizeOfSide - 20);
+                        tempI = rI % _sizeOfSide;
+                        rI -= tempI;
+                        rJ = r.Next(20, _height - _sizeOfSide - 20);
+                        tempJ = rJ % _sizeOfSide;
+                        rJ -= tempJ;
+                        i = 0;
+                    }
+                }
+            }
             //rI++;
             //rJ++;
             fruit.Location = new Point(rI, rJ);
@@ -229,12 +246,12 @@ namespace Snake
                 else
                 {
                     if ((10 <= score) && (score < 15))
-                        speed = speed - 150;
+                        speed = speed - 125;
                     else
                     {
                         if ((15 <= score) && (score < 20))
-                            speed = speed - 200;
-                        else speed = speed - 220;
+                            speed = speed - 150;
+                        else speed = speed - 200;
                     }
                 }
             }
